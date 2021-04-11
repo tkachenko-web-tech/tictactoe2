@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 export function Square({ value, userRole, makeTurn, id, game }) {
     return (
         <Button
-            className="square"
+            className="square text-lg-center"
             onClick={() => { return makeTurn(id) }}
             disabled={!(() => {
                 if (value !== '')

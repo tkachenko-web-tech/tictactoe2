@@ -43,13 +43,13 @@ export function Game() {
 
     function Status() {
         if (userRole === null)
-            return (<Alert>Wait for another player to join.</Alert>);
+            return (<Alert>Wait for another player to join. Use the following link to invite: <br /> <a href={window.location.href}>{window.location.href}</a></Alert>);
         if (game.status === 'TIE')
             return (<Alert>Game is finished! It&apos;s a tie!</Alert>);
         if (game.status === 'X_WIN' && userRole === 'X' || game.status === 'O_WIN' && userRole === 'O')
             return (<Alert>Game is finished! You won!</Alert>);
         if (game.status === 'X_WIN' && userRole === 'O' || game.status === 'O_WIN' && userRole === 'X')
-            return (<Alert>Game is finished! You lose.</Alert>)
+            return (<Alert>Game is finished! You lose.</Alert>);
         if (userRole === 'X' && game.turn % 2 === 0 || userRole === 'O' && game.turn % 2 !== 0) {
             return (<Alert>It&apos;s your turn.</Alert>);
         } else {
@@ -62,16 +62,18 @@ export function Game() {
     }
 
     return (
-        <div className="game">
-            <Auth authInit={authInit}/>
-            <div className="board">
-                {
-                    game?.squares?.map((square, i) => (
-                        <Square key={i} makeTurn={makeTurn} value={square} userRole={userRole} game={game} id={i} />
-                    ))
-                }
+        <div className="text-center">
+            <div className="game">
+                <Auth authInit={authInit}/>
+                <div className="board">
+                    {
+                        game?.squares?.map((square, i) => (
+                            <Square key={i} makeTurn={makeTurn} value={square} userRole={userRole} game={game} id={i}/>
+                        ))
+                    }
+                </div>
             </div>
-            <Status />
+            <Status/>
             <Button onClick={handleBackHome}>Back Home</Button>
         </div>
     );
