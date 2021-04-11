@@ -1,10 +1,10 @@
 const { DataTypes, Model } = require('sequelize');
 const db = require('../db');
 
-class UserModel extends Model {
+class User extends Model {
 }
 
-UserModel.init({
+User.init({
     id: { type: DataTypes.STRING, primaryKey: true },
     username: DataTypes.STRING,
     password: DataTypes.STRING
@@ -13,8 +13,4 @@ UserModel.init({
     modelName: 'user',
 });
 
-(async () => {
-    await db.sync();
-})();
-
-module.exports = UserModel;
+module.exports = User;

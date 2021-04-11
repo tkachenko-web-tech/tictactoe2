@@ -1,30 +1,31 @@
-const UserModel = require('../models/user.model');
+const User = require('../models/user.model');
 const { v4: uuid } = require('uuid');
 
 const afterQuery = (x) => { return x ? x.get({ plain: true }) : null };
 
-const UserService = {
-    getUserById: async (id) => {
+class UserService {
+
+    async getById (id) {
         if (!id)
             return null;
-        return await UserModel.findOne({ where: { id } }).then(afterQuery);
-    },
-    getUserByUsernameAndPassword: async (username, password) => {
-        if (!username || !password)
-            return null;
-        return await UserModel.findOne({ where: { username, password }}).then(afterQuery);
-    },
-    createUser: async (username, password) => {
-        if (!username || !password)
-            return null;
-        if (await UserModel.count({ where: { username } }) > 0)
-            return null;
-        return await UserModel.create({ id: uuid(), username, password }).then(afterQuery);
+        return await User.findOne({ where: { id } }).then(afterQuery);
     }
-};
 
-(async () => {
-    console.log(await UserModel.findAll());
-})()
+    async getByCreds (username, password) {
+        if (!username || !password)
+            return null;
+        return await User.findOne({ where: { username, password }}).then(afterQuery);
+    }
 
-module.exports = UserService;
+    async create (username, password) {
+        if (!username || !password)
+            return null;
+        if (await User.count({ where: { username } }) > 0)
+            return null;
+        return await User.create({ id: uuid(), username, password }).then(afterQuery);
+    }
+}
+
+const userService = new UserService();
+
+module.exports = userService;

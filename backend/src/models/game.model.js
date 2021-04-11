@@ -1,30 +1,33 @@
 const { DataTypes, Model } = require('sequelize');
-const UserModel = require('./user.model');
+const User = require('./user.model');
 const db = require('../db');
 
-class GameModel extends Model {
-    getSquares() {
-        return this.squares.split(';');
-    }
-
-    setSquares(squares) {
-        return this.sqaures.join(';');
-    }
+class Game extends Model {
 }
 
-GameModel.init({
+Game.init({
     id: { type: DataTypes.STRING, primaryKey: true },
-    squares: { type: DataTypes.STRING },
+    squares: {
+        type: DataTypes.STRING,
+        get() {
+            return this.getDataValue('squares').split(';');
+        },
+        set(s) {
+            return this.setDataValue('squares', s.join(';'));
+        },
+        defaultValue: Array(9).fill('').join(';'),
+    },
+    turn: { type: DataTypes.INTEGER, defaultValue: 0 },
+    xUserId: DataTypes.STRING,
+    oUserId: DataTypes.STRING,
+    status: { type: DataTypes.STRING, defaultValue: 'CREATED' }, // CREATED -> NOT_FINISHED -> TIE / X_WIN / O_WIN,
+    winner: DataTypes.STRING
 }, {
     sequelize: db,
     modelName: 'game',
 });
 
-(async () => {
-    await db.sync();
-})();
+Game.belongsToMany(User, { through: 'user_game' });
+User.belongsToMany(Game, { through: 'user_game' });
 
-GameModel.hasOne(UserModel, { foreignKey: 'xUserId' });
-GameModel.hasOne(UserModel, { foreignKey: 'oUserId' });
-
-module.exports = GameModel;
+module.exports = Game;
