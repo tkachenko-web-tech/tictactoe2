@@ -9,5 +9,8 @@
     "socket.io": "^4.0.1",
     "sqlite3": "^5.0.2",
     "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "node src/server.js"
   }
 }
