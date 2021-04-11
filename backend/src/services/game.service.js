@@ -31,19 +31,29 @@ class GameService {
     async getByUserId(userId) {
         if (!userId)
             return [];
-        const user = await User.findOne({ where: { id: userId }, include: Game });
+        const user = await User.findOne({ where: { id: userId }, include: Game }).then(afterQuery);
         if (!user)
             return [];
         const notFinishedGames = [];
         const finishedGames = [];
 
-        games.forEach(game => {
+        await Promise.all(user.games.map(async game => {
+            if (game.status !== 'CREATED')
+                game.opponent = await User.findOne({ where: { id: game.xUserId === userId ? game.oUserId : game.xUserId } }).then(afterQuery);
             if (game.status === 'CREATED' || game.status === 'NOT_FINISHED')
-                notFinishedGames.push(games);
+                notFinishedGames.push(game);
             else
-                finishedGames.push(games);
-        })
-        return [...notFinishedGames, ...finishedGames];
+                finishedGames.push(game);
+        }));
+
+        return {
+            notFinishedGames: notFinishedGames.sort((a, b) =>
+                new Date(b.updatedAt) - new Date(a.updatedAt),
+            ),
+            finishedGames: finishedGames.sort((a, b) =>
+                new Date(b.updatedAt) - new Date(a.updatedAt),
+            ),
+        };
     }
 
 
@@ -97,9 +107,10 @@ class GameService {
         game.squares = squares;
         game.turn = game.turn + 1;
         game.status = this.newStatus(game.squares, game.turn);
+        if (game.status !== 'NOT_FINISHED' && game.status !== 'CREATED')
+            game.winner = game.turn % 2 === 0 ? game.oUserId : game.xUserId;
         await game.save();
-        console.log(game)
-        return await Game.findOne({ where: { id: game.id }}).then(afterQuery);
+        return await Game.findOne({ where: { id: game.id } }).then(afterQuery);
     }
 
     newStatus(squares, turn) {

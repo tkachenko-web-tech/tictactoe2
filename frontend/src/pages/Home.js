@@ -28,8 +28,8 @@ export function Home() {
             <ListGroup.Item size="lg" className="text-center m-1" action onClick={handleCreateGame} active>
                 Create game
             </ListGroup.Item>
-            <ListGroup.Item className="text-center m-1" action onClick={() => {}} active>
-                List of your games
+            <ListGroup.Item className="text-center m-1" action onClick={() => history.push('list')} active>
+                Statistics
             </ListGroup.Item>
             <ListGroup.Item className="text-center m-1" action onClick={handleExit} active>
                 Log out

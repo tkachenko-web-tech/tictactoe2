@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { Home, Login, Game } from '../pages/exporter';
 import React from 'react';
+import { List } from '../pages/List';
 
 function App() {
     return (
@@ -16,6 +17,9 @@ function App() {
                 </Route>
                 <Route path="/game/:gameId">
                     <Game />
+                </Route>
+                <Route exact path="/list">
+                    <List />
                 </Route>
             </Router>
         </main>
