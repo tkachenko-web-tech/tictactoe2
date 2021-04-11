@@ -1,0 +1,26 @@
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    position: fixed;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100%;
+}
+
+.board {
+    display: grid;
+    grid-gap: 1px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.board .square {
+    width: 90px;
+    height: 90px;
+}

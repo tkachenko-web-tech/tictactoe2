@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Cookies from 'universal-cookie/es6';
 import { request } from '../helpers';
 
-export function Auth({ setUser }) {
+export function Auth({ authInit }) {
     const cookies = new Cookies();
     const history = useHistory();
 
@@ -16,7 +16,7 @@ export function Auth({ setUser }) {
             cookies.remove('userId');
             history.push('/login');
         } else {
-            setUser(userId);
+            authInit(userId);
         }
     }, []);
 

@@ -28,7 +28,7 @@ export function Login() {
     async function handleLogin(event) {
         const { data: user } = await request('user/login', 'POST', { username, password });
         if (!user)
-            alert('Пользователь не найден');
+            alert('User not found or password is incorrect.');
         else {
             cookies.set('userId', user.id, { sameSite: true });
             history.push('/');
@@ -38,7 +38,7 @@ export function Login() {
     async function handleRegister(event) {
         const { data: user } = await request('user', 'POST', { username, password });
         if (!user)
-            alert('Пользователь с таким именем уже существует');
+            alert('User with this name already exists.');
         else {
             cookies.set('userId', user.id, { sameSite: true });
             history.push('/');
@@ -64,10 +64,10 @@ export function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
-                <Button block size="lg" disabled={!validateForm()} onClick={handleLogin}>
+                <Button block disabled={!validateForm()} onClick={handleLogin} >
                     Log in
                 </Button>
-                <Button block size="lg" disabled={!validateForm()} onClick={handleRegister}>
+                <Button block disabled={!validateForm()} onClick={handleRegister}>
                     Register
                 </Button>
             </Form>
