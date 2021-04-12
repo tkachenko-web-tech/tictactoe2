@@ -107,7 +107,7 @@ class GameService {
         game.squares = squares;
         game.turn = game.turn + 1;
         game.status = this.newStatus(game.squares, game.turn);
-        if (game.status !== 'NOT_FINISHED' && game.status !== 'CREATED')
+        if (game.status === 'X_WIN' || game.status === 'O_WIN')
             game.winner = game.turn % 2 === 0 ? game.oUserId : game.xUserId;
         await game.save();
         return await Game.findOne({ where: { id: game.id } }).then(afterQuery);
