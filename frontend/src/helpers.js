@@ -8,3 +8,16 @@ export async function request(url, method, body) {
     });
     return response.json();
 }
+
+export const STATUS = {
+    TIE: 'TIE',
+    X_WIN: 'X_WIN',
+    O_WIN: 'O_WIN',
+    NOT_FINISHED: 'NOT_FINISHED',
+    CREATED: 'CREATED'
+}
+
+export const PLAYER = {
+    X: 'X',
+    O: 'O'
+}

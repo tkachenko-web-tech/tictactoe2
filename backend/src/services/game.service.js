@@ -4,6 +4,19 @@ const { v4: uuid } = require('uuid');
 
 const randomBool = () => Math.random() < 0.5;
 
+const STATUS = {
+    TIE: 'TIE',
+    X_WIN: 'X_WIN',
+    O_WIN: 'O_WIN',
+    NOT_FINISHED: 'NOT_FINISHED',
+    CREATED: 'CREATED'
+}
+
+const PLAYER = {
+    X: 'X',
+    O: 'O'
+}
+
 const afterQuery = (x) => {
     return x ? x.get({ plain: true }) : null;
 };
@@ -38,9 +51,9 @@ class GameService {
         const finishedGames = [];
 
         await Promise.all(user.games.map(async game => {
-            if (game.status !== 'CREATED')
+            if (game.status !== STATUS.CREATED)
                 game.opponent = await User.findOne({ where: { id: game.xUserId === userId ? game.oUserId : game.xUserId } }).then(afterQuery);
-            if (game.status === 'CREATED' || game.status === 'NOT_FINISHED')
+            if (game.status === STATUS.CREATED || game.status === STATUS.NOT_FINISHED)
                 notFinishedGames.push(game);
             else
                 finishedGames.push(game);
@@ -74,7 +87,7 @@ class GameService {
                 [game.xUserId, game.oUserId] = ids;
             else
                 [game.oUserId, game.xUserId] = ids;
-            game.status = 'NOT_FINISHED';
+            game.status = STATUS.NOT_FINISHED;
             await game.save();
         }
         return afterQuery(game);
@@ -94,11 +107,11 @@ class GameService {
         const whichTurn = this.whichTurn(game.turn);
 
         // checks
-        if (game.status !== 'NOT_FINISHED' || squareNumber > 8 || squareNumber < 0)
+        if (game.status !== STATUS.NOT_FINISHED || squareNumber > 8 || squareNumber < 0)
             return game;
         if (game.squares[squareNumber] !== '')
             return game;
-        if (whichTurn === 'X' && game.xUserId !== userId || whichTurn === 'O' && game.oUserId !== userId)
+        if (whichTurn === PLAYER.X && game.xUserId !== userId || whichTurn === PLAYER.O && game.oUserId !== userId)
             return game;
 
         const squares = game.squares;
@@ -106,7 +119,7 @@ class GameService {
         game.squares = squares;
         game.turn = game.turn + 1;
         game.status = this.newStatus(game.squares, game.turn);
-        if (game.status === 'X_WIN' || game.status === 'O_WIN')
+        if (game.status === STATUS.X_WIN || game.status === STATUS.O_WIN)
             game.winner = game.turn % 2 === 0 ? game.oUserId : game.xUserId;
         await game.save();
         return await Game.findOne({ where: { id: game.id } }).then(afterQuery);
@@ -116,17 +129,17 @@ class GameService {
         for (const win of WINS) {
             const [a, b, c] = win;
             if (squares[a] + squares[b] + squares[c] === 'XXX')
-                return 'X_WIN';
+                return STATUS.X_WIN;
             if (squares[a] + squares[b] + squares[c] === 'OOO')
-                return 'O_WIN';
+                return STATUS.O_WIN;
         }
         if (turn >= 9)
-            return 'TIE';
-        return 'NOT_FINISHED';
+            return STATUS.TIE;
+        return STATUS.NOT_FINISHED;
     }
 
     whichTurn(turn) {
-        return turn % 2 === 0 ? 'X' : 'O';
+        return turn % 2 === 0 ? PLAYER.X : PLAYER.O;
     }
 
     async isFull(gameId) {
