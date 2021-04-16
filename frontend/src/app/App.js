@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import { Home, Login, Game } from '../pages';
+import { Home, Login, Game, NotAuthPage, AuthPage } from '../pages';
 import React from 'react';
 import { List } from '../pages/List';
 
@@ -10,16 +10,16 @@ function App() {
         <main className="wrapper">
             <Router>
                 <Route exact path="/">
-                    <Home/>
-                </Route>
-                <Route exact path="/login">
-                    <Login/>
+                    <AuthPage Decorated={Home}/>
                 </Route>
                 <Route path="/game/:gameId">
-                    <Game />
+                    <AuthPage Decorated={Game}/>
                 </Route>
                 <Route exact path="/list">
-                    <List />
+                    <AuthPage Decorated={List}/>
+                </Route>
+                <Route exact path="/login">
+                    <NotAuthPage Decorated={Login}/>
                 </Route>
             </Router>
         </main>

@@ -1,4 +1,8 @@
+import Cookies from 'universal-cookie/es6';
+import React from 'react';
+
 export async function request(url, method, body) {
+    console.log(url, method, body);
     const response = await fetch('http://localhost:3001/' + url, {
         method,
         ...(() => !!body ? {
@@ -21,3 +25,7 @@ export const PLAYER = {
     X: 'X',
     O: 'O'
 }
+
+export const cookies = new Cookies();
+
+export const UserContext = React.createContext(null);

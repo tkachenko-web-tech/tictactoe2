@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { Auth } from '../components';
+import React, { useContext} from 'react';
 import { ListGroup } from 'react-bootstrap';
-import Cookies from 'universal-cookie/es6';
+import { cookies } from '../helpers';
 import { useHistory } from 'react-router-dom';
-import { request } from '../helpers';
+import { request, UserContext } from '../helpers';
 
 export function Home() {
     const history = useHistory();
-    const cookies = new Cookies();
-    const [user, setUser] = useState(null);
+    const userId = useContext(UserContext);
 
     function handleExit() {
         cookies.remove('userId', { sameSite: true, path: '/' });
@@ -16,24 +14,24 @@ export function Home() {
     }
 
     async function handleCreateGame() {
-        if (!user)
+        if (!(typeof userId === 'string'))
             return;
         const { data: game } = await request('game', 'POST');
         history.push(`/game/${game.id}`);
     }
 
-    return (<div className="home">
-        <Auth authInit={setUser}/>
-        <ListGroup>
-            <ListGroup.Item size="lg" className="text-center m-1" action onClick={handleCreateGame} active>
-                Create game
-            </ListGroup.Item>
-            <ListGroup.Item className="text-center m-1" action onClick={() => history.push('list')} active>
-                Statistics
-            </ListGroup.Item>
-            <ListGroup.Item className="text-center m-1" action onClick={handleExit} active>
-                Log out
-            </ListGroup.Item>
-        </ListGroup>
-    </div>);
+    if (userId)
+        return (<div className="home">
+            <ListGroup>
+                <ListGroup.Item size="lg" className="text-center m-1" action onClick={handleCreateGame} active>
+                    Create game
+                </ListGroup.Item>
+                <ListGroup.Item className="text-center m-1" action onClick={() => history.push('list')} active>
+                    Statistics
+                </ListGroup.Item>
+                <ListGroup.Item className="text-center m-1" action onClick={handleExit} active>
+                    Log out
+                </ListGroup.Item>
+            </ListGroup>
+        </div>);
 }

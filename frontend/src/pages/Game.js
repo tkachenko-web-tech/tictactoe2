@@ -1,8 +1,8 @@
-import { Auth, Square } from '../components';
+import { Square } from '../components';
 import { useHistory, useParams } from 'react-router-dom';
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { io } from 'socket.io-client';
-import { request, STATUS, PLAYER } from '../helpers';
+import { request, STATUS, PLAYER, UserContext } from '../helpers';
 import { Alert, Button } from 'react-bootstrap';
 
 const SOCKET_ENDPOINT = 'http://localhost:3001';
@@ -12,30 +12,33 @@ const socket = io(SOCKET_ENDPOINT);
 export function Game() {
     const history = useHistory();
     const { gameId } = useParams();
-    const [userId, setUserId] = useState(null);
+    const userId = useContext(UserContext);
     const [game, setGame] = useState(null);
     const [userRole, setUserRole] = useState(null);
 
-    async function authInit(userId) {
-        setUserId(userId);
-        const { data: game } = await request('game/join', 'post', { gameId, userId });
-        if (!game) {
-            alert(`The game does not exists or it already has two joined players.`);
-            history.push('/');
-        } else {
-            setGame(game);
-            socket.emit('join', { gameId, userId });
+    useEffect(() => {
+        const init = async () => {
+            const { data: game } = await request('game/join', 'post', { gameId, userId });
+            if (!game) {
+                alert(`The game does not exists or it already has two joined players.`);
+                history.push('/');
+            } else {
+                setGame(game);
+                socket.emit('join', { gameId, userId });
 
-            socket.on('game-state', data => {
-                setGame(data);
-                if (data.oUserId === userId)
-                    setUserRole(PLAYER.O);
-                else if (data.xUserId === userId)
-                    setUserRole(PLAYER.X);
-            });
-
+                socket.on('game-state', data => {
+                    setGame(data);
+                    if (data.oUserId === userId)
+                        setUserRole(PLAYER.O);
+                    else if (data.xUserId === userId)
+                        setUserRole(PLAYER.X);
+                });
+            }
         }
-    }
+
+        if (typeof userId === 'string')
+            init();
+    }, [userId])
 
     function makeTurn(squareNumber) {
         socket.emit('turn', { gameId: game.id, userId, squareNumber });
@@ -64,7 +67,6 @@ export function Game() {
     return (
         <div className="text-center">
             <div className="game">
-                <Auth authInit={authInit}/>
                 <div className="board">
                     {
                         game?.squares?.map((square, i) => (
