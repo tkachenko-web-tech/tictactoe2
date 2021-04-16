@@ -60,13 +60,12 @@ class GameService {
     async joinUser(gameId, userId) {
         if (!gameId || !userId)
             return null;
-        const user = await User.findOne({ where: { id: userId }, include: Game });
+        const user = await User.findOne({ where: { id: userId } });
         const game = await Game.findOne({ where: { id: gameId }, include: User });
         if (!user || !game || game.users.length > 2)
             return null;
-        if (user.games.findIndex(x => x.id === game.id) !== -1) {
+        if (game.users.findIndex(x => x.id === userId) !== -1)
             return afterQuery(game);
-        }
         await game.addUser(user);
         const joinedUsers = await game.getUsers();
         if (joinedUsers.length === 2) {

@@ -10,11 +10,13 @@ router.post('/', async (req, res) => {
 router.post('/join', async (req, res) => {
     const { gameId, userId } = req.body;
     const game = await GameService.joinUser(gameId, userId);
+    console.log(game.users);
     game.users = game.users.map(x => {
         if (x.hasOwnProperty('username'))
             delete x.username
         if (x.hasOwnProperty('password'))
             delete x.password
+        return x;
     })
     res.json({ data: game });
 })

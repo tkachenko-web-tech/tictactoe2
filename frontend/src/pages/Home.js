@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Auth } from '../components/Auth';
-import { Button, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Auth } from '../components';
+import { ListGroup } from 'react-bootstrap';
 import Cookies from 'universal-cookie/es6';
 import { useHistory } from 'react-router-dom';
 import { request } from '../helpers';

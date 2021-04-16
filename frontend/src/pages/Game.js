@@ -1,12 +1,12 @@
-import { Auth } from '../components/Auth';
+import { Auth, Square } from '../components';
 import { useHistory, useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { io } from 'socket.io-client';
 import { request } from '../helpers';
 import { Alert, Button } from 'react-bootstrap';
-import { Square } from '../components/Square';
 
 const SOCKET_ENDPOINT = 'http://localhost:3001';
+const socket = io(SOCKET_ENDPOINT);
 
 export function Game() {
     const history = useHistory();
@@ -14,7 +14,6 @@ export function Game() {
     const [userId, setUserId] = useState(null);
     const [game, setGame] = useState(null);
     const [userRole, setUserRole] = useState(null);
-    const socket = io(SOCKET_ENDPOINT);
 
     async function authInit(userId) {
         setUserId(userId);
