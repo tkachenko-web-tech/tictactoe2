@@ -51,7 +51,7 @@ export function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
-                <Button block disabled={!validateForm()} onClick={handleLogin} >
+                <Button block disabled={!validateForm()} onClick={handleLogin}>
                     Log in
                 </Button>
                 <Button block disabled={!validateForm()} onClick={handleRegister}>
