@@ -1,25 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import Cookies from 'universal-cookie/es6';
-import { request } from '../helpers';
+import { request, cookies, UserContext } from '../helpers';
 
 export function Login() {
-    const cookies = new Cookies();
     const history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
-    useEffect(async () => {
-        const userId = cookies.get('userId');
-        if (userId) {
-            const { data: user } = await request(`user/${userId}`, 'GET');
-            if (!user)
-                cookies.remove('userId');
-            else
-                history.push('/');
-        }
-    }, []);
 
     function validateForm() {
         return username.length > 0 && password.length > 0;
@@ -64,7 +51,7 @@ export function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
-                <Button block disabled={!validateForm()} onClick={handleLogin} >
+                <Button block disabled={!validateForm()} onClick={handleLogin}>
                     Log in
                 </Button>
                 <Button block disabled={!validateForm()} onClick={handleRegister}>
